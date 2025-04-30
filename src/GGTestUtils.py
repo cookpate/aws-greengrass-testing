@@ -335,7 +335,8 @@ class GGTestUtils:
             print(f"ggl.{service}.service")
         self._ggServiceList = []
 
-    def get_ggcore_device_status(self, timeout, thing_group_name):
+    def get_ggcore_device_status(self, timeout, thing_group_name,
+                                 desired_health):
         things_in_group = self._iotClient.list_things_in_thing_group(
             thingGroupName=thing_group_name,
             recursive=False,
@@ -350,10 +351,10 @@ class GGTestUtils:
             return_val = self._ggClient.get_core_device(
                 coreDeviceThingName=things_in_group["things"][0])
 
-            if return_val is None or return_val["status"] != "HEALTHY":
+            if return_val is None or return_val["status"] != desired_health:
                 time.sleep(1)
                 timeout -= 1
             else:
-                return return_val["status"]
+                return True
 
-        return None
+        return False
